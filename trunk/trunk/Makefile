@@ -14,15 +14,13 @@ all: $(IMAGE)
 # Put this string to make fs on the floppy image
 # but make sure that it's supported by the bootloader (for now it doesn't)
 #mke2fs -F -b 1024 $(IMG_NAME)
-$(IMAGE): $(BOOTLOADER) $(KERNEL)
+$(IMAGE): subdirs
 	dd if=/dev/zero of=$(IMAGE) bs=512 count=$(SECTORS)
 	dd if=$(BOOTLOADER) of=$(IMAGE) bs=512 seek=0 count=1 conv=notrunc
 	dd if=$(KERNEL) of=$(IMAGE) bs=512 seek=1 conv=notrunc
 
-$(BOOTLOADER):
+subdirs:
 	$(MAKE) -C ./bootloader/
-
-$(KERNEL):
 	$(MAKE) -C ./kernel/
 
 .PHONY: clean

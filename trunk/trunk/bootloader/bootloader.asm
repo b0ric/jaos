@@ -20,7 +20,7 @@
 [BITS 16]
 [ORG 0x7C00]
 
-%include "bootloader.h"
+%include "bootloader.ash"
 
         xor ax, ax
         mov ds, ax

@@ -4,10 +4,10 @@ MAKE=make
 INCDIR=./include
 OBJDIR=./obj
 # object directory hierarchy
-OBJDIRH=./obj/drivers				\
-	./obj/drivers/clock			\
-	./obj/drivers/video			\
-	./obj/drivers/keyboard
+VPATH=	./drivers				\
+	./drivers/clock				\
+	./drivers/video				\
+	./drivers/keyboard
 
 ASM=nasm
 ASMFLAGS=-f elf
@@ -23,15 +23,14 @@ LD=ld
 LDFLAGS=-s -Ttext=0x1000 -Tdata=0x2000 -z max-page-size=0x100
 
 # sequence is important here!
-_OBJS=	entry.o					\
+OBJECTS=entry.o					\
 	kmain.o					\
 	klib.o					\
 	interrupts.o				\
 	drivers/clock/timer.o			\
 	drivers/video/vgascreen.o		\
+	drivers/video/vga.o			\
 	drivers/keyboard/keybd.o
-
-OBJECTS=$(patsubst %,$(OBJDIR)/%,$(_OBJS))
 
 all: kernel
 
@@ -39,20 +38,17 @@ kernel: $(OBJECTS)
 	$(LD) $(LDFLAGS) $^ -o $@
 	strip -R .comment -R .rel.plt -R .plt -R .got.plt $@
 
-$(OBJDIR)/%.o: %.asm
-	$(ASM) $(ASMFLAGS) $^ -o $@
+# NOTE that NASM search for included files in the current directory
+# but for make utility it is always the same - dir where Makefile is placed
+# to solve this problem here we do a little trick with 'make' function $(dir )
+%.o: %.asm
+	$(ASM) $(ASMFLAGS) $^ -o $@ -I$(dir $^)
 
-$(OBJDIR)/%.o: %.c
+%.o: %.c
 	$(CXX) $(CXXFLAGS) $^ -o $@
-
-$(OBJECTS): | $(OBJDIR)
-
-$(OBJDIR):
-	mkdir $(OBJDIR)
-	mkdir $(OBJDIRH)
 
 .PHONY: clean
 
 clean:
-	rm -rf ./obj 
+	rm -f $(OBJECTS)
 	rm -f kernel
