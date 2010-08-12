@@ -1,0 +1,10 @@
+target remote localhost:1234
+set architecture i8086
+# bootloader startup
+# break *0x07C00
+break *0x01000
+# kmain call
+break *0x0104b
+# keybd interrupt
+break *0x017f9
+disp/i $pc
