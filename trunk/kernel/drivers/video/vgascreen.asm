@@ -26,7 +26,7 @@ GLOBAL cls
 GLOBAL printchar
 GLOBAL prnstr
 
-%define VGA_BUF 0x0000B8000
+%define VGA_BUF 0x0000A0000
 %define TEXT_ATTR 0x07          ; black background, white fore
 
 [SECTION .text]

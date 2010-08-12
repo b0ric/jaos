@@ -2,7 +2,7 @@ ASM=nasm
 
 all: bootloader
 
-bootloader: bootloader.asm bootloader.h
+bootloader: bootloader.asm bootloader.ash
 	$(ASM) -f bin $< -o $@
 
 .PHONY: clean

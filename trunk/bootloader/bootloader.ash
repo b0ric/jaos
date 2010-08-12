@@ -17,8 +17,8 @@
 ; Author: Borisov Alexandr <b0ric.alex@gmail.com>
 ;
 
-%ifndef BOOTLOADER_H
-%define BOOTLOADER_H
+%ifndef BOOTLOADER_ASH
+%define BOOTLOADER_ASH
 
 ; desired video mode
 %define VM_VGA_TEXT 0x03                        ; VGA: 80x25, font 9x16, 720x400, 16bit
@@ -71,5 +71,5 @@
 ; kernel entry point
 %define CODE_SEG_ENTRY 0x1000
 
-%endif ; BOOTLOADER_H
+%endif ; BOOTLOADER_ASH
 
