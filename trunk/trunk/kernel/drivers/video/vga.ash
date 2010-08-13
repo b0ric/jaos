@@ -34,8 +34,10 @@
 ; VGA registers indexes defenitions
 %define GRAPH_MISC 0x06
 %define CRTC_CUR_START 0x0A
-%define CRTC_CUR_LOC_HIGH 0x0E
-%define CRTC_CUR_LOC_LOW 0x0F
+%define CRTC_CUR_LOC_HI 0x0E
+%define CRTC_CUR_LOC_LO 0x0F
+%define CRTC_START_ADDR_HI 0x0C
+%define CRTC_START_ADDR_LO 0x0D
 
 ; memory map bits (VGA_GRAPH_MISC register)
 %define MEM_MAP_SEL_RESET 0xF3

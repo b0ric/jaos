@@ -22,9 +22,9 @@
 %include "vga.ash"
 
 GLOBAL init_vga
-GLOBAL enable_cursor
-GLOBAL disable_cursor
-GLOBAL set_cursor
+GLOBAL vga_set_cursor
+GLOBAL vga_scroll
+GLOBAL vga_copy
 
 ; void init_ga ()
 init_vga:
@@ -35,10 +35,10 @@ init_vga:
         mov dx, GRAPH_DATA
         in al, dx
         and al, MEM_MAP_SEL_RESET       ; drop desired bits to zero
-        or al, MEM_MAP_128K             ; set them desired value
+        or al, MEM_MAP_64K              ; set them desired value
         out dx, al
         
-        ; where to map CRTC register IO ports (answer: to 0x3Dx)
+        ; where to map CRTC register IO ports (answer is: to 0x3Dx)
         mov dx, EXT_MISC_OUT_RD
         in al, dx
         and al, IOAS_RESET
@@ -48,41 +48,14 @@ init_vga:
         
         ret
 
-; TODO: test!!
-; void enable_cursor ()
-enable_cursor:
-        mov dx, CRTC_ADDR
-        mov al, CRTC_CUR_START
-        out dx, al 
-        mov dx, CRTC_DATA
-        in al, dx
-        and al, CUR_DISABLE_RESET
-        out dx, al
-        
-        ret
-
-; TODO: test!
-; void disable_cursor ()
-disable_cursor:
-        mov dx, CRTC_ADDR
-        mov al, CRTC_CUR_START
-        out dx, al 
-        mov dx, CRTC_DATA
-        in al, dx
-        and al, CUR_DISABLE_RESET
-        or al, CUR_DISABLE
-        out dx, al
-
-        ret
-
-; void set_cursor (uint16_t addr)
-set_cursor:
+; void vga_set_cursor (uint16_t addr)
+vga_set_cursor:
         push ebp
         mov ebp, esp
 
         mov bx, [ebp+8]                 ; 16-bit cursor address from stack
         mov dx, CRTC_ADDR
-        mov al, CRTC_CUR_LOC_HIGH
+        mov al, CRTC_CUR_LOC_HI
         out dx, al
         mov ax, bx
         and ax, 0xFF00
@@ -91,7 +64,7 @@ set_cursor:
         out dx, al
                 
         mov dx, CRTC_ADDR
-        mov al, CRTC_CUR_LOC_LOW
+        mov al, CRTC_CUR_LOC_LO
         out dx, al
         mov ax, bx
         and ax, 0x00FF
@@ -101,5 +74,37 @@ set_cursor:
         mov esp, ebp
         pop ebp
         
+        ret
+
+; void set_disp_addr (uint16_t addr)
+vga_scroll:
+        push ebp
+        mov ebp, esp
+
+        mov bx, [ebp+8]                 ; 16-bit cursor address from stack
+        mov dx, CRTC_ADDR
+        mov al, CRTC_START_ADDR_HI
+        out dx, al
+        mov ax, bx
+        and ax, 0xFF00
+        shr ax, 8
+        mov dx, CRTC_DATA
+        out dx, al
+        
+        mov dx, CRTC_ADDR
+        mov al, CRTC_START_ADDR_LO
+        out dx, al
+        mov ax, bx
+        and ax, 0x00FF
+        mov dx, CRTC_DATA
+        out dx, al
+        
+        mov esp, ebp
+        pop ebp
+
+        ret
+
+vga_copy:
+
         ret
 
