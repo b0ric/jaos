@@ -17,23 +17,28 @@
  * Author: Borisov Alexandr <b0ric.alex@gmail.com>
  */
 
-#include <mem.h>
+#ifndef _TTY_H
+#define _TTY_H
 
-MemInfo mem[3];
+#include <stdint.h>
 
-int kmain ()
-{
-  //init_vga ();
-  prnstr ("Starting kernel routines...\n");
-  prnstr ("Initializing 8259A PIC controller\n");  
-  init_pic ();
-  prnstr ("Building and loading IDT table\n");  
-  load_idt ();
-  prnstr ("Initializing 8253 PIT controller\n");
-  init_timer ();
-  prnstr ("Enabling interrupts\n");  
-  enable_ints ();
+#define TTY_INBUF_SZ 32
 
-  return 0x1f;
-}
+struct tty_t;
+
+/* returns error or number of read/written symbols, etc */
+typedef uint8_t (*tty_open_t)(void);
+typedef uint8_t (*tty_read_t)(struct tty_t *term);
+typedef uint8_t (*tty_write_t)(struct tty_t *term);
+typedef uint8_t (*tty_close_t)(void);
+
+struct tty_t {
+  tty_open_t open;
+  tty_read_t read;
+  tty_write_t write;
+  tty_close_t close;
+  uint16_t inbuf[TTY_INBUF_SZ];
+};
+
+#endif /* _TTY_H */
 

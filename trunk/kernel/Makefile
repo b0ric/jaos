@@ -28,9 +28,11 @@ OBJECTS=entry.o					\
 	klib.o					\
 	interrupts.o				\
 	drivers/clock/timer.o			\
+	drivers/keyboard/keybd.o		\
+	drivers/tty/console.o			\
 	drivers/video/vgascreen.o		\
-	drivers/video/vga.o			\
-	drivers/keyboard/keybd.o
+	drivers/video/vga.o
+
 
 all: kernel
 
