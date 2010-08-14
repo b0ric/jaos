@@ -18,18 +18,19 @@
 ;
 
 [BITS 32]
-
 GLOBAL inb
 GLOBAL inw
 GLOBAL inl
 GLOBAL outb
 GLOBAL outw
 GLOBAL outl
+GLOBAL copy_mem
 GLOBAL reboot
 
 %define KBD_IO 0x60		; keyboard IO port (data and command)
 %define KBDI_IO 0x64		; keyboard IO interface port (data and command)
 
+; ==============================================================================
 ; IO related functions 
 
 ; uin8_t inb (uint16_t port)
@@ -64,7 +65,7 @@ inl:
         mov ebp, esp
 
         xor eax, eax
-        mov dx, [ebp+4]
+        mov dx, [ebp+8]
         in eax, dx
 
         mov esp, ebp
@@ -77,7 +78,7 @@ outb:
         mov ebp, esp
 
         mov dx, [ebp+8]
-        mov al, [ebp+16]
+        mov al, [ebp+12]
         out dx, al
 
         mov esp, ebp
@@ -90,7 +91,7 @@ outw:
         mov ebp, esp
 
         mov dx, [ebp+8]
-        mov ax, [ebp+16]
+        mov ax, [ebp+12]
         out dx, ax
 
         mov esp, ebp
@@ -103,13 +104,34 @@ outl:
         mov ebp, esp
 
         mov dx, [ebp+8]
-        mov eax, [ebp+16]
+        mov eax, [ebp+12]
         out dx, eax
 
         mov esp, ebp
         pop ebp
         ret
 
+; ==============================================================================
+; memory operating functions
+
+; void copy_mem (uint32_t dest, uint32_t source, uint32_t count)
+copy_mem:
+        push ebp
+        mov ebp, esp
+
+        mov edi, [ebp+8]
+        mov esi, [ebp+12]
+        mov ecx, [ebp+16]
+        rep movsb
+
+        mov esp, ebp
+        pop ebp
+        ret
+
+; ==============================================================================
+; miscellanea functions
+
+; void reboot ()
 reboot:
 	cli
 kbwait:

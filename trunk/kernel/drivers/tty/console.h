@@ -23,39 +23,12 @@
 #include <stdint.h>
 #include "tty.h"
 
-#define NR_CONS 1
-
-#define VGA_MEM_ADDR 0xA0000
-
-/* Video mode defenitions */
-#define VGA_TEXT_LINES 25
-#define VGA_TEXT_COLS 80
-
-/* VGA color attributes (suffix L = Light, D = Dark)*/
-#define COL_BLACK 0x00
-#define COL_BLUE 0x01
-#define COL_GREEN 0x02
-#define COL_CYAN 0x03
-#define COL_RED 0x04
-#define COL_MAGENTA 0x05
-#define COL_BROWN 0x06
-#define COL_LGRAY 0x07
-#define COL_DGRAY 0x08
-#define COL_LBLUE 0x09
-#define COL_LGREEN 0x0A
-#define COL_LCYAN 0x0B
-#define COL_LRED 0x0C
-#define COL_LMAGENTA 0x0D
-#define COL_YELLOW 0x0E
-#define COL_WHITE 0x0F
-
-#define FORE(val) (val)
-#define BACK(val) ((val) << 4)
+#define NR_CONS (NR_TTYS)
 
 #define TAB_LEN 8               // only power of 2
 #define TAB_MASK (TAB_LEN-1)    // to determine actual TAB length
 
-typedef struct _console_t {
+typedef struct {
   uint32_t addr;                // starting display address for console
   uint16_t mem_size;            // size of memory available for console
   uint16_t cursor;              // cursor position
@@ -63,9 +36,12 @@ typedef struct _console_t {
   uint8_t col;                  // current output column (next char will go here)
   uint8_t attr;                 // current output attribute
   uint8_t prev_char;            // previous character sent to console
-  struct tty_t *tty;            // associated tty structure
 } console_t;
 
+extern console_t cons[];
+
+void cons_init (console_t *cons);
+void cons_write (struct tty_t *term);
 
 #endif /* _CONSOLE_H */
 

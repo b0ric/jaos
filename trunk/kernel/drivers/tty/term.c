@@ -17,24 +17,32 @@
  * Author: Borisov Alexandr <b0ric.alex@gmail.com>
  */
 
-#include <mem.h>
+#include <stdint.h>
 #include <term.h>
+#include "tty.h"
 
-MemInfo mem[3];
+static uint8_t init_terms_once = 1;
 
-int kmain ()
+void init_terms (uint8_t idx)
 {
-  init_terms (0);
-  kprint ("Starting kernel routines...\n");
-  kprint ("Initializing 8259A PIC controller\n");  
-  init_pic ();
-  kprint ("Building and loading IDT table\n");  
-  load_idt ();
-  kprint ("Initializing 8253 PIT controller\n");
-  init_timer ();
-  kprint ("Enabling interrupts\n");  
-  enable_ints ();
-
-  return 0x1f;
+  if (init_terms_once) {
+        init_vga ();
+        init_terms_once = 0;
+  }
+  init_tty (&tty[idx]);
 }
+
+void kprint (uint8_t *str)
+{
+  uint8_t cnt;
+  uint8_t *ch  = str;
+  struct tty_t *active_tty = &tty[active];
+
+  for (cnt = 0; *ch != '\0'; ch++, cnt++)
+        ;
+  copy_mem (active_tty->outbuf, str, cnt);
+  active_tty->count = cnt;
+  active_tty->write(active_tty);
+}
+
 

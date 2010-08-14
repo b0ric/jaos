@@ -19,13 +19,38 @@
 
 #include "console.h"
 
-void cons_init (console_t *cons);
-void cons_write (console_t *cons, uint8_t *buf, uint8_t count);
-void cons_out_char (console_t *cons, uint8_t ch);
-void cons_out_raw (console_t *cons, uint8_t ch);
-void cons_scroll (console_t *cons, uint8_t to_line);
+#define VGA_MEM_ADDR 0xA0000
 
-static console_t console[NR_CONS];
+/* Video mode defenitions */
+#define VGA_TEXT_LINES 25
+#define VGA_TEXT_COLS 80
+
+/* VGA color attributes (suffix L = Light, D = Dark)*/
+#define COL_BLACK 0x00
+#define COL_BLUE 0x01
+#define COL_GREEN 0x02
+#define COL_CYAN 0x03
+#define COL_RED 0x04
+#define COL_MAGENTA 0x05
+#define COL_BROWN 0x06
+#define COL_LGRAY 0x07
+#define COL_DGRAY 0x08
+#define COL_LBLUE 0x09
+#define COL_LGREEN 0x0A
+#define COL_LCYAN 0x0B
+#define COL_LRED 0x0C
+#define COL_LMAGENTA 0x0D
+#define COL_YELLOW 0x0E
+#define COL_WHITE 0x0F
+
+#define FORE(val) (val)
+#define BACK(val) ((val) << 4)
+
+console_t cons[NR_CONS];
+
+static void cons_out_char (console_t *cons, uint8_t ch);
+static void cons_out_raw (console_t *cons, uint8_t ch);
+static void cons_scroll (console_t *cons, uint8_t to_line);
 
 void cons_init (console_t *cons)
 {
@@ -35,15 +60,15 @@ void cons_init (console_t *cons)
   cons->line = 0;
   cons->col = 0;
   cons->prev_char = '\n';
-  cons->attr = FORE(COL_WHITE) | BACK(COL_BLACK);
+  cons->attr = FORE(COL_LGRAY) | BACK(COL_BLACK);
 }
 
-void cons_write (console_t *cons, uint8_t *buf, uint8_t count)
+void cons_write (struct tty_t *term)
 {
   uint8_t i;
 
-  for (i = 0; i < count; i++)
-        cons_out_char(cons, buf[i]);
+  for (i = 0; i < term->count; i++)
+        cons_out_char(&cons[term->idx], term->outbuf[i]);
 }
 
 void cons_out_char (console_t *cons, uint8_t ch)
@@ -53,7 +78,8 @@ void cons_out_char (console_t *cons, uint8_t ch)
 
   if (ch < 0x20) {
         switch (ch) {
-          case '\a':    break;          // bell is not implemented yet
+          case '\0': return;
+          case '\a': break;             // bell is not implemented yet
           case '\b':
                 if (cons->prev_char == '\n') break; //don't delete entered data
                 if (cons->col == 0) {
@@ -63,7 +89,7 @@ void cons_out_char (console_t *cons, uint8_t ch)
                         cons->col--;
                 break;
           case '\t':
-                tab_len = TAB_LEN - (console->col + 1) & TAB_MASK;
+                tab_len = TAB_LEN - (cons->col + 1) & TAB_MASK;
                 for (i = 0; i < tab_len; i++)
                         cons_out_raw (cons, ' ');
                 break;
@@ -87,7 +113,7 @@ void cons_out_raw (console_t *cons, uint8_t ch)
   uint16_t vid_data;
   uint32_t vid_addr;
 
-  vid_data = ch & (cons->attr << 8);
+  vid_data = ch | (cons->attr << 8);
   vid_addr = cons->addr + (cons->line * VGA_TEXT_COLS + cons->col) * 2;
   
   vga_copy (vid_addr, vid_data);

@@ -26,7 +26,7 @@ GLOBAL vga_set_cursor
 GLOBAL vga_scroll
 GLOBAL vga_copy
 
-; void init_ga ()
+; void init_vga ()
 init_vga:
         ; select memory map (size and base)
         mov dx, GRAPH_ADDR
@@ -73,7 +73,6 @@ vga_set_cursor:
         
         mov esp, ebp
         pop ebp
-        
         ret
 
 ; void set_disp_addr (uint16_t addr)
@@ -101,10 +100,18 @@ vga_scroll:
         
         mov esp, ebp
         pop ebp
-
         ret
 
+; void vga_copy (uint32_t vid_addr, uint16_t vid_data)
 vga_copy:
+        push ebp
+        mov ebp, esp
 
+        mov eax, [ebp+8]                 ; 32-bit address in VGA memory
+        mov bx, [ebp+12]                 ; 16-bit video data (char and attr)
+        mov [eax], bx
+        
+        mov esp, ebp
+        pop ebp
         ret
 
