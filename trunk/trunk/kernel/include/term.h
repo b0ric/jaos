@@ -17,24 +17,12 @@
  * Author: Borisov Alexandr <b0ric.alex@gmail.com>
  */
 
-#include <mem.h>
-#include <term.h>
+#ifndef _TERM_H
+#define _TERM_H
 
-MemInfo mem[3];
+#include <stdint.h>
 
-int kmain ()
-{
-  init_terms (0);
-  kprint ("Starting kernel routines...\n");
-  kprint ("Initializing 8259A PIC controller\n");  
-  init_pic ();
-  kprint ("Building and loading IDT table\n");  
-  load_idt ();
-  kprint ("Initializing 8253 PIT controller\n");
-  init_timer ();
-  kprint ("Enabling interrupts\n");  
-  enable_ints ();
+void kprint (uint8_t *str);     // print null-terminated string from kernel
+void init_terms (uint8_t idx);  // initialize terminal number idx
 
-  return 0x1f;
-}
-
+#endif /* _TERM_H*/

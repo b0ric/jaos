@@ -22,23 +22,35 @@
 
 #include <stdint.h>
 
-#define TTY_INBUF_SZ 32
-
 struct tty_t;
 
+#define NR_TTYS 1
+#define TTY_BUF_SZ 256
+
 /* returns error or number of read/written symbols, etc */
-typedef uint8_t (*tty_open_t)(void);
-typedef uint8_t (*tty_read_t)(struct tty_t *term);
-typedef uint8_t (*tty_write_t)(struct tty_t *term);
-typedef uint8_t (*tty_close_t)(void);
+typedef void (*tty_open_t)(struct tty_t *term);
+typedef void (*tty_read_t)(struct tty_t *term);
+typedef void (*tty_write_t)(struct tty_t *term);
+typedef void (*tty_close_t)(struct tty_t *term);
 
 struct tty_t {
-  tty_open_t open;
-  tty_read_t read;
-  tty_write_t write;
-  tty_close_t close;
-  uint16_t inbuf[TTY_INBUF_SZ];
+  /* IO members */
+  uint8_t idx;                          // terminal index (and associated console)
+  tty_open_t open;                      // open tty function
+  tty_close_t close;                    // close tty function
+  
+  /* input members */
+  tty_read_t read;                      // read tty function
+  uint16_t inbuf[TTY_BUF_SZ];           // input buffer for read
+  
+  /* output members */
+  tty_write_t write;                    // write tty function
+  uint8_t outbuf[TTY_BUF_SZ];           // output buffer to write to tty
+  uint8_t count;                        // number of chars to write to tty
 };
+
+extern struct tty_t tty[];
+extern uint8_t active;
 
 #endif /* _TTY_H */
 

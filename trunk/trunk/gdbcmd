@@ -1,10 +1,12 @@
 target remote localhost:1234
 set architecture i8086
+#file ./kernel/kernel
+
+break *0x112d
+
+# uncomment to debug assembly code
 # bootloader startup
-# break *0x07C00
-break *0x01000
-# kmain call
-break *0x0104b
-# keybd interrupt
-break *0x017f9
-disp/i $pc
+#break *0x07C00
+# kernel entry
+#break *0x01000
+#disp/i $pc

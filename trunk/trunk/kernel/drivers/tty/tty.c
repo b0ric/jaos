@@ -17,24 +17,41 @@
  * Author: Borisov Alexandr <b0ric.alex@gmail.com>
  */
 
-#include <mem.h>
 #include <term.h>
+#include "tty.h"
+#include "console.h"
 
-MemInfo mem[3];
+struct tty_t tty[NR_TTYS];
+uint8_t active;                 // active tty index
 
-int kmain ()
+void tty_nop (struct tty_t *term);
+void init_tty (struct tty_t *term);
+
+/* init standart terminal (monitor & keyboard) */
+void init_tty (struct tty_t *term)
 {
-  init_terms (0);
-  kprint ("Starting kernel routines...\n");
-  kprint ("Initializing 8259A PIC controller\n");  
-  init_pic ();
-  kprint ("Building and loading IDT table\n");  
-  load_idt ();
-  kprint ("Initializing 8253 PIT controller\n");
-  init_timer ();
-  kprint ("Enabling interrupts\n");  
-  enable_ints ();
+  static i = 0;                 // console number associated with this terminal
 
-  return 0x1f;
+  term->idx = i++;
+  cons_init (&cons[term->idx]);
+  term->open = tty_nop;
+  term->close = tty_nop;
+
+  term->read = tty_nop;
+  *term->inbuf = '\0';
+  
+  term->write = cons_write;
+  *term->outbuf = '\0';
+  term->count = 0;
+}
+
+void tty_nop (struct tty_t *term)
+{
+  // do nothing
+}
+
+void tty_echo ()
+{
+  
 }
 

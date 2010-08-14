@@ -33,7 +33,7 @@
 
 ; kernel related constants
 ; kernel size rounded up to 512-byte boundary
-%define KERN_SECT_SIZE 10
+%define KERN_SECT_SIZE 12
 
 ; address to read raw kernel to
 ; will be calculated at 16-bit mode (as KERN_RAW_ADDR_HI<<4+KERN_RAW_ADDR_LO)
