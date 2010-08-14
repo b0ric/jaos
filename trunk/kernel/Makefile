@@ -20,7 +20,7 @@ CXXFLAGS=-c -I $(INCDIR)
 # in the file and it leads to excessive grow of kernel size
 # here we avoid it because it's useless for us
 LD=ld
-LDFLAGS=-s -Ttext=0x1000 -Tdata=0x2000 -z max-page-size=0x100
+LDFLAGS=-s -Ttext=0x1000 -Tdata=0x3000 -z max-page-size=0x100
 
 # sequence is important here!
 OBJECTS=entry.o					\

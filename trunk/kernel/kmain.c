@@ -23,7 +23,7 @@ MemInfo mem[3];
 
 int kmain ()
 {
-  //init_vga ();
+  init_vga ();
   prnstr ("Starting kernel routines...\n");
   prnstr ("Initializing 8259A PIC controller\n");  
   init_pic ();

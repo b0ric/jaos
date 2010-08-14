@@ -33,7 +33,7 @@
 
 ; kernel related constants
 ; kernel size rounded up to 512-byte boundary
-%define KERN_SECT_SIZE 8
+%define KERN_SECT_SIZE 10
 
 ; address to read raw kernel to
 ; will be calculated at 16-bit mode (as KERN_RAW_ADDR_HI<<4+KERN_RAW_ADDR_LO)
@@ -43,7 +43,7 @@
 ; these addresses are also defined for 32-bit mode in entry.asm
 %define KERN_CODE_ADDR_HI 0x0100
 %define KERN_CODE_ADDR_LOW 0x0000
-%define KERN_DATA_ADDR_HI 0x0200                ; .bss and .data together
+%define KERN_DATA_ADDR_HI 0x0300                ; .bss and .data together
 %define KERN_DATA_ADDR_LOW 0x0000
 
 ; ELF format constants

@@ -49,7 +49,7 @@ readsect:
 
         ; read 8 sectors (4k) from drive
         mov ah, 0x02
-        mov al, KERN_SECT_SIZE          ; 8 sectors
+        mov al, KERN_SECT_SIZE          ; how many sectors to read?
         mov cx, 0x0002                  ; CHS = (0, 0, 2) and C=[0:1023], H=[0:1], S=[1:63] - sector to start from
         mov dh, 0x00                    ;  ^  = (   ^   )
         mov dl, [drive]
