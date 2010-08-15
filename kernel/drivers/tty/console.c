@@ -55,7 +55,7 @@ static void cons_scroll (console_t *cons, uint8_t to_line);
 void cons_init (console_t *cons)
 {
   cons->addr = VGA_MEM_ADDR;
-  cons->mem_size = ~0;               // 64k of VGA memory
+  cons->mem_size = 0x7FFF;              // 32k of VGA memory
   cons->cursor = 0;
   cons->line = 0;
   cons->col = 0;
@@ -66,9 +66,14 @@ void cons_init (console_t *cons)
 void cons_write (struct tty_t *term)
 {
   uint8_t i;
+  console_t *active;
 
   for (i = 0; i < term->count; i++)
         cons_out_char(&cons[term->idx], term->outbuf[i]);
+  /* change cursor position */
+  active = &cons[term->idx];
+  active->cursor = active->line * VGA_TEXT_COLS + active->col;
+  vga_set_cursor (active->cursor);
 }
 
 void cons_out_char (console_t *cons, uint8_t ch)
