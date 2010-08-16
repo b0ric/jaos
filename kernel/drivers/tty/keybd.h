@@ -55,10 +55,12 @@
 
 /* modifiers field macros */
 #define A(key)    (0x80 | (key))        // ALT (prints extended ASCII symbols)
-#define SP(key)   (SPECIAL & (key))     // SPECIAL key
+#define S(key)    (key)
+#define C(key)    (key)
+#define SP(key)   (SPECIAL | (key))     // SPECIAL key
 
 /* check for modifiers macros */
-#define ISSPECIAL(key) ((1 << SPSHIFT) & (key))
+#define ISSPECIAL(key) (SPECIAL & (key))
 
 /* escape code to mark escape sequence */
 #define ESC     0xE0

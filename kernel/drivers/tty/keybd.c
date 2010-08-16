@@ -43,7 +43,7 @@ void keybd_handle_irq (void)
   
   sc = inb (KBD_IO);
   if (sc & BREAK) {
-        kc = keymap[sc & ~BREAK];
+        kc = key_map[sc & ~BREAK];
         if (ISSPECIAL(kc))
                 kc &= ~SPECIAL;
                 /* we won't differ left and right modifiers */
@@ -66,11 +66,11 @@ void keybd_handle_irq (void)
                         case RCTRL:
                                 rctrl = 0;
                                 break;
-                        case default:
+                        default:
                                 break;
                 }
   } else if (sc != ESC) {
-        kc = keymap[sc];
+        kc = key_map[sc];
   } else {
         esc = 1;
   }

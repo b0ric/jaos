@@ -5,9 +5,7 @@ INCDIR=./include
 # object directory hierarchy
 VPATH=	./drivers				\
 	./drivers/clock				\
-	./drivers/keyboard			\
-	./drivers/tty				\
-	./drivers/video
+	./drivers/tty
 
 ASM=nasm
 ASMFLAGS=-f elf -g
@@ -29,11 +27,12 @@ OBJECTS=entry.o					\
 	klib.o					\
 	interrupts.o				\
 	drivers/clock/timer.o			\
-	drivers/keyboard/keybd.o		\
 	drivers/tty/console.o			\
+	drivers/tty/keybd.o			\
 	drivers/tty/term.o			\
 	drivers/tty/tty.o			\
-	drivers/video/vga.o
+	drivers/tty/vga.o			\
+	drivers/tty/layout/us-std.o
 
 
 all: kernel
