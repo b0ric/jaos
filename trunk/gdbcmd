@@ -1,8 +1,6 @@
 target remote localhost:1234
 set architecture i8086
-#file ./kernel/kernel
-
-break *0x112d
+file ./kernel/kernel
 
 # uncomment to debug assembly code
 # bootloader startup

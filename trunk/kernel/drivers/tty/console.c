@@ -19,7 +19,9 @@
 
 #include "console.h"
 
+/* VGA parameters is used to calculate individual parameters for each console */
 #define VGA_MEM_ADDR 0xA0000
+#define VGA_MEM_SIZE 0x7FFF
 
 /* Video mode defenitions */
 #define VGA_TEXT_LINES 25
@@ -48,15 +50,13 @@
 
 console_t cons[NR_CONS];
 
-static void cons_out_char (console_t *cons, uint8_t ch);
 static void cons_out_raw (console_t *cons, uint8_t ch);
 static void cons_scroll (console_t *cons, uint8_t to_line);
 
 void cons_init (console_t *cons)
 {
   cons->addr = VGA_MEM_ADDR;
-  cons->mem_size = 0x7FFF;              // 32k of VGA memory
-  cons->cursor = 0;
+  cons->mem_size = VGA_MEM_SIZE;        // 32k of VGA memory
   cons->line = 0;
   cons->col = 0;
   cons->prev_char = '\n';
@@ -72,8 +72,7 @@ void cons_write (struct tty_t *term)
         cons_out_char(&cons[term->idx], term->outbuf[i]);
   /* change cursor position */
   active = &cons[term->idx];
-  active->cursor = active->line * VGA_TEXT_COLS + active->col;
-  vga_set_cursor (active->cursor);
+  update_cursor (active);
 }
 
 void cons_out_char (console_t *cons, uint8_t ch)
@@ -102,6 +101,7 @@ void cons_out_char (console_t *cons, uint8_t ch)
                 cons->line++;
                 cons->col = 0;
                 cons_scroll (cons, cons->line);
+                update_cursor (cons);
                 break;
           default:                      // not implemented, do-nothing-symbol, etc
                 break;
@@ -129,6 +129,13 @@ void cons_out_raw (console_t *cons, uint8_t ch)
         cons_scroll (cons, cons->line);
   } else
         cons->col++;
+  
+  update_cursor (cons);
+}
+
+void update_cursor (console_t *cons)
+{
+  vga_set_cursor (cons->line * VGA_TEXT_COLS + cons->col);
 }
 
 /* the last line it'll show is the to_line */
@@ -138,7 +145,7 @@ void cons_scroll (console_t *cons, uint8_t to_line)
   uint16_t scroll_addr;
   
   if (to_line >= VGA_TEXT_LINES - 1) {
-        scroll_addr = (to_line - VGA_TEXT_LINES) * VGA_TEXT_COLS;
+        scroll_addr = (to_line - (VGA_TEXT_LINES - 1)) * VGA_TEXT_COLS;
         vga_scroll (scroll_addr);
   }
 }

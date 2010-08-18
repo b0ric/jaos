@@ -31,7 +31,6 @@
 typedef struct {
   uint32_t addr;                // starting display address for console
   uint16_t mem_size;            // size of memory available for console
-  uint16_t cursor;              // cursor position
   uint8_t line;                 // current output line (next char will go here)
   uint8_t col;                  // current output column (next char will go here)
   uint8_t attr;                 // current output attribute
@@ -42,6 +41,7 @@ extern console_t cons[];
 
 void cons_init (console_t *cons);
 void cons_write (struct tty_t *term);
+void cons_out_char (console_t *cons, uint8_t ch);
 
 #endif /* _CONSOLE_H */
 
