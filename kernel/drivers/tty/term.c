@@ -21,15 +21,12 @@
 #include <term.h>
 #include "tty.h"
 
-static uint8_t init_terms_once = 1;
-
 void init_terms (uint8_t idx)
 {
-  if (init_terms_once) {
-        init_vga ();
-        init_terms_once = 0;
-  }
-  init_tty (&tty[idx]);
+  uint8_t i;
+
+  for (i = 0; i < NR_TTYS; i++)
+        init_tty (&tty[idx]);
 }
 
 void kprint (uint8_t *str)

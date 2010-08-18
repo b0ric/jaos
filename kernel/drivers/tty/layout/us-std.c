@@ -17,6 +17,7 @@
  * Author: Borisov Alexandr <b0ric.alex@gmail.com>
  */
 
+#include "../tty.h"
 #include "../keybd.h"
 
 /* array to map key codes to equvalent ASCII char */
@@ -61,8 +62,8 @@ keycode_t key_map[] = {
 /*  24  */      'j',            'J',            Alt('j'),       Alt('J'),       0,
 /*  25  */      'k',            'K',            Alt('k'),       Alt('K'),       0,
 /*  26  */      'l',            'L',            Alt('l'),       Alt('L'),       0,
-/*  27  */      '\'',           '\"',           Alt('\''),      Alt('\"'),      0,
-/*  28  */      ';',            ':',            Alt(';'),       Alt(':'),       0,
+/*  27  */      ';',            ':',            Alt(':'),       Alt(':'),       0,
+/*  28  */      '\'',           '\"',           Alt('\"'),      Alt('\"'),      0,
 /*  29  */      '`',            '~',            Alt('`'),       Alt('~'),       0,
 /*  2A  */      SP(LSHIFT),     SP(LSHIFT),     SP(LSHIFT),     SP(LSHIFT),     0,
 /*  2B  */      '\\',           '|',            Alt('\\'),      Alt('|'),       0,
